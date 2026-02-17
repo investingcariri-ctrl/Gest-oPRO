@@ -1,0 +1,5 @@
+{
+  "name": "TesourariaPro",
+  "description": "Sistema completo para gestão financeira de associações, incluindo fluxo de caixa, contas a pagar/receber, conciliação bancária e análise financeira com IA.",
+  "requestFramePermissions": []
+}

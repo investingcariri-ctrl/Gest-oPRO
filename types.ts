@@ -49,10 +49,14 @@ export interface Project {
   id: string;
   title: string;
   description: string;
+  objective: string;
+  targetAudience: string;
+  resources: string;
+  financialImpact: number;
+  executionDate: string;
+  executionLocation: string;
   status: ProjectStatus;
-  startDate: string;
-  endDate?: string;
-  budget: number;
+  authorId?: string;
 }
 
 export interface OfficialDocument {

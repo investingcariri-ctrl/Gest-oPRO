@@ -1,5 +1,5 @@
 {
-  "name": "TesourariaPro",
-  "description": "Sistema completo para gestão financeira de associações, incluindo fluxo de caixa, contas a pagar/receber, conciliação bancária e análise financeira com IA.",
+  "name": "Gestão Integrada Pro",
+  "description": "Sistema completo para gestão administrativa e financeira de associações, grêmios estudantis, etc., incluindo fluxo de caixa, contas a pagar/receber, conciliação bancária, cadastro de membros de diretoria, projetos, entre outros.",
   "requestFramePermissions": []
 }

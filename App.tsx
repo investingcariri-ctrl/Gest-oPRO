@@ -14,28 +14,11 @@ import Login from './components/Login';
 import { FinanceProvider } from './context/FinanceContext';
 import { supabase } from './services/supabaseClient';
 
-const Payables = () => (
-    <div className="space-y-6">
-        <div className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-400 p-4">
-            <p className="text-sm text-amber-700 dark:text-amber-400">
-                <strong>Nota:</strong> Esta visualização filtra automaticamente transações pendentes.
-            </p>
-        </div>
-        <TransactionManager />
-    </div>
-);
-
 const App: React.FC = () => {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Initialize theme
-    const theme = localStorage.getItem('theme');
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    }
-
     // Check current session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -53,7 +36,7 @@ const App: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -71,7 +54,6 @@ const App: React.FC = () => {
                     {/* Financeiro */}
                     <Route path="accounts" element={<AccountManager />} />
                     <Route path="transactions" element={<TransactionManager />} />
-                    <Route path="payables" element={<Payables />} />
                     <Route path="reports" element={<Reports />} />
                     {/* Secretaria */}
                     <Route path="board" element={<BoardManager />} />

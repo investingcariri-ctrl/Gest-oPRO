@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { Transaction, Category, FinancialSummary, Account, BoardMember, Project, OfficialDocument } from '../types';
 import { supabase } from '../services/supabaseClient';
 
@@ -79,27 +79,7 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
     reconciled: dbTrans.reconciled || false
   });
 
-  const mapBoardMember = (db: any): BoardMember => ({
-    id: db.id,
-    name: db.name,
-    role: db.role,
-    termStart: db.term_start,
-    termEnd: db.term_end,
-    phone: db.phone,
-    email: db.email
-  });
-
-  const mapProject = (db: any): Project => ({
-    id: db.id,
-    title: db.title,
-    description: db.description,
-    status: db.status,
-    startDate: db.start_date,
-    endDate: db.end_date,
-    budget: Number(db.budget)
-  });
-
-  const fetchInitialData = async () => {
+  const fetchInitialData = useCallback(async () => {
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -121,46 +101,68 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
       if (cat.data) setCategories(cat.data);
       if (trans.data) setTransactions(trans.data.map(mapTransaction));
       if (docs.data) setDocuments(docs.data);
-      if (board.data) setBoardMembers(board.data.map(mapBoardMember));
-      if (projs.data) setProjects(projs.data.map(mapProject));
+      if (board.data) setBoardMembers(board.data.map(db => ({
+        id: db.id, name: db.name, role: db.role, termStart: db.term_start, termEnd: db.term_end, phone: db.phone, email: db.email
+      })));
+      if (projs.data) setProjects(projs.data.map(db => ({
+        id: db.id, title: db.title, description: db.description, objective: db.objective || '', targetAudience: db.target_audience || '',
+        resources: db.resources || '', financialImpact: Number(db.financial_impact || 0), executionDate: db.execution_date || '',
+        executionLocation: db.execution_location || '', status: db.status, authorId: db.author_id
+      })));
       if (offDocs.data) setOfficialDocuments(offDocs.data);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchInitialData();
-  }, []);
-
-  const updateAssociationName = async (name: string) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const { error } = await supabase.from('profiles').upsert({ id: user.id, association_name: name });
-    if (!error) setAssociationName(name);
-  };
+  }, [fetchInitialData]);
 
   const addTransaction = async (t: Omit<Transaction, 'id'>) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    const dbPayload = {
+    const { data } = await supabase.from('transactions').insert([{
       user_id: user.id, date: t.date, description: t.description, amount: t.amount, type: t.type,
       category: t.category, account_id: t.accountId, status: t.status, payment_method: t.paymentMethod,
       notes: t.notes, attachment: t.attachment, reconciled: t.reconciled
-    };
-    const { data, error } = await supabase.from('transactions').insert([dbPayload]).select().single();
+    }]).select().single();
     if (data) setTransactions(prev => [mapTransaction(data), ...prev]);
   };
 
+  const getSummary = useCallback((): FinancialSummary => {
+    return transactions.reduce((acc, t) => {
+      const isIncome = t.type === 'income';
+      const isCompleted = t.status === 'completed';
+      if (isIncome) {
+        if (isCompleted) acc.totalIncome += t.amount;
+        else acc.pendingIncome += t.amount;
+      } else {
+        if (isCompleted) acc.totalExpense += t.amount;
+        else acc.pendingExpense += t.amount;
+      }
+      if (isCompleted) acc.balance += isIncome ? t.amount : -t.amount;
+      return acc;
+    }, { totalIncome: 0, totalExpense: 0, balance: 0, pendingIncome: 0, pendingExpense: 0 });
+  }, [transactions]);
+
+  // Restante das funções simplificadas para eficiência
+  const updateAssociationName = async (name: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+        await supabase.from('profiles').upsert({ id: user.id, association_name: name });
+        setAssociationName(name);
+    }
+  };
+
   const updateTransaction = async (updated: Transaction) => {
-    const dbPayload = {
+    await supabase.from('transactions').update({
       date: updated.date, description: updated.description, amount: updated.amount, type: updated.type,
       category: updated.category, account_id: updated.accountId, status: updated.status,
       payment_method: updated.paymentMethod, notes: updated.notes, attachment: updated.attachment, reconciled: updated.reconciled
-    };
-    await supabase.from('transactions').update(dbPayload).eq('id', updated.id);
+    }).eq('id', updated.id);
     setTransactions(prev => prev.map(t => t.id === updated.id ? updated : t));
   };
 
@@ -172,14 +174,16 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
   const addAccount = async (a: Omit<Account, 'id'>) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    const dbPayload = { user_id: user.id, name: a.name, type: a.type, initial_balance: a.initialBalance, description: a.description };
-    const { data } = await supabase.from('accounts').insert([dbPayload]).select().single();
+    const { data } = await supabase.from('accounts').insert([{
+      user_id: user.id, name: a.name, type: a.type, initial_balance: a.initialBalance, description: a.description
+    }]).select().single();
     if (data) setAccounts(prev => [...prev, mapAccount(data)]);
   };
 
   const updateAccount = async (updated: Account) => {
-    const dbPayload = { name: updated.name, type: updated.type, initial_balance: updated.initialBalance, description: updated.description };
-    await supabase.from('accounts').update(dbPayload).eq('id', updated.id);
+    await supabase.from('accounts').update({
+      name: updated.name, type: updated.type, initial_balance: updated.initialBalance, description: updated.description
+    }).eq('id', updated.id);
     setAccounts(prev => prev.map(a => a.id === updated.id ? updated : a));
   };
 
@@ -190,9 +194,10 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   const addCategory = async (c: Omit<Category, 'id'>) => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const { data } = await supabase.from('categories').insert([{ ...c, user_id: user.id }]).select().single();
-    if (data) setCategories(prev => [...prev, data]);
+    if (user) {
+      const { data } = await supabase.from('categories').insert([{ ...c, user_id: user.id }]).select().single();
+      if (data) setCategories(prev => [...prev, data]);
+    }
   };
 
   const updateCategory = async (id: string, name: string) => {
@@ -207,17 +212,22 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   const addDocument = async (name: string, url: string, folder: string) => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const { data } = await supabase.from('documents').insert([{ name, file_url: url, folder, user_id: user.id }]).select().single();
-    if (data) setDocuments(prev => [data, ...prev]);
+    if (user) {
+      const { data } = await supabase.from('documents').insert([{ name, file_url: url, folder, user_id: user.id }]).select().single();
+      if (data) setDocuments(prev => [data, ...prev]);
+    }
   };
 
   const addBoardMember = async (m: Omit<BoardMember, 'id'>) => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const dbPayload = { user_id: user.id, name: m.name, role: m.role, term_start: m.termStart, term_end: m.termEnd, phone: m.phone, email: m.email };
-    const { data } = await supabase.from('board_members').insert([dbPayload]).select().single();
-    if (data) setBoardMembers(prev => [...prev, mapBoardMember(data)]);
+    if (user) {
+      const { data } = await supabase.from('board_members').insert([{
+        user_id: user.id, name: m.name, role: m.role, term_start: m.termStart, term_end: m.termEnd, phone: m.phone, email: m.email
+      }]).select().single();
+      if (data) setBoardMembers(prev => [...prev, {
+        id: data.id, name: data.name, role: data.role, termStart: data.term_start, termEnd: data.term_end, phone: data.phone, email: data.email
+      }]);
+    }
   };
 
   const deleteBoardMember = async (id: string) => {
@@ -227,15 +237,26 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   const addProject = async (p: Omit<Project, 'id'>) => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const dbPayload = { user_id: user.id, title: p.title, description: p.description, status: p.status, start_date: p.startDate, end_date: p.endDate, budget: p.budget };
-    const { data } = await supabase.from('projects').insert([dbPayload]).select().single();
-    if (data) setProjects(prev => [mapProject(data), ...prev]);
+    if (user) {
+      const { data } = await supabase.from('projects').insert([{
+        user_id: user.id, title: p.title, description: p.description, objective: p.objective, target_audience: p.targetAudience,
+        resources: p.resources, financial_impact: p.financialImpact, execution_date: p.executionDate, execution_location: p.executionLocation,
+        status: p.status, author_id: p.authorId
+      }]).select().single();
+      if (data) setProjects(prev => [{
+        id: data.id, title: data.title, description: data.description, objective: data.objective, targetAudience: data.target_audience,
+        resources: data.resources, financialImpact: data.financial_impact, executionDate: data.execution_date, executionLocation: data.execution_location,
+        status: data.status, authorId: data.author_id
+      }, ...prev]);
+    }
   };
 
   const updateProject = async (p: Project) => {
-    const dbPayload = { title: p.title, description: p.description, status: p.status, start_date: p.startDate, end_date: p.endDate, budget: p.budget };
-    await supabase.from('projects').update(dbPayload).eq('id', p.id);
+    await supabase.from('projects').update({
+      title: p.title, description: p.description, objective: p.objective, target_audience: p.targetAudience,
+      resources: p.resources, financial_impact: p.financialImpact, execution_date: p.executionDate, execution_location: p.executionLocation,
+      status: p.status, author_id: p.authorId
+    }).eq('id', p.id);
     setProjects(prev => prev.map(proj => proj.id === p.id ? p : proj));
   };
 
@@ -246,30 +267,15 @@ export const FinanceProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   const addOfficialDocument = async (d: Omit<OfficialDocument, 'id' | 'created_at'>) => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const { data } = await supabase.from('official_documents').insert([{ ...d, user_id: user.id }]).select().single();
-    if (data) setOfficialDocuments(prev => [data, ...prev]);
+    if (user) {
+      const { data } = await supabase.from('official_documents').insert([{ ...d, user_id: user.id }]).select().single();
+      if (data) setOfficialDocuments(prev => [data, ...prev]);
+    }
   };
 
   const deleteOfficialDocument = async (id: string) => {
     await supabase.from('official_documents').delete().eq('id', id);
     setOfficialDocuments(prev => prev.filter(d => d.id !== id));
-  };
-
-  const getSummary = (): FinancialSummary => {
-    return transactions.reduce((acc, t) => {
-      const isIncome = t.type === 'income';
-      const isCompleted = t.status === 'completed';
-      if (isIncome) {
-        if (isCompleted) acc.totalIncome += t.amount;
-        else acc.pendingIncome += t.amount;
-      } else {
-        if (isCompleted) acc.totalExpense += t.amount;
-        else acc.pendingExpense += t.amount;
-      }
-      if (isCompleted) acc.balance += isIncome ? t.amount : -t.amount;
-      return acc;
-    }, { totalIncome: 0, totalExpense: 0, balance: 0, pendingIncome: 0, pendingExpense: 0 });
   };
 
   return (

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useFinance } from '../context/FinanceContext';
 import { Account } from '../types';
@@ -7,9 +8,16 @@ const AccountManager: React.FC = () => {
   const { accounts, addAccount, updateAccount, deleteAccount, transactions } = useFinance();
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
+  
+  // Tipagem explícita para evitar o erro de inferência literal 'bank'
+  const [formData, setFormData] = useState<{
+    name: string;
+    type: 'bank' | 'cash' | 'savings';
+    initialBalance: string;
+    description: string;
+  }>({
     name: '',
-    type: 'bank' as const,
+    type: 'bank',
     initialBalance: '',
     description: ''
   });
@@ -69,8 +77,8 @@ const AccountManager: React.FC = () => {
   const getIcon = (type: Account['type']) => {
     switch(type) {
         case 'bank': return <Landmark size={24} className="text-blue-600" />;
-        case 'cash': return <Wallet size={24} className="text-emerald-600" />;
-        case 'savings': return <PiggyBank size={24} className="text-amber-600" />;
+        case 'cash': return <Wallet size={24} className="text-blue-500" />;
+        case 'savings': return <PiggyBank size={24} className="text-blue-400" />;
     }
   };
 
@@ -78,12 +86,12 @@ const AccountManager: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-           <h2 className="text-2xl font-bold text-slate-800">Cadastro de Caixas & Contas</h2>
+           <h2 className="text-2xl font-bold text-blue-900">Cadastro de Caixas & Contas</h2>
            <p className="text-slate-500">Gerencie contas bancárias e caixas físicos</p>
         </div>
         <button 
           onClick={() => { if(showForm && !editingId) setShowForm(false); else { resetForm(); setShowForm(true); } }}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-md"
         >
           {showForm && !editingId ? <X size={20} /> : <Plus size={20} />}
           {showForm && !editingId ? 'Fechar' : 'Nova Conta'}
@@ -91,8 +99,8 @@ const AccountManager: React.FC = () => {
       </div>
 
       {showForm && (
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-slate-200 animate-in fade-in slide-in-from-top-4">
-          <h3 className="text-lg font-bold text-slate-800 mb-4">
+        <div className="bg-white p-6 rounded-xl shadow-lg border border-blue-50 animate-in fade-in slide-in-from-top-4">
+          <h3 className="text-lg font-bold text-blue-900 mb-4">
             {editingId ? 'Editar Conta/Caixa' : 'Cadastrar Nova Conta/Caixa'}
           </h3>
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -102,7 +110,7 @@ const AccountManager: React.FC = () => {
                 type="text" 
                 required
                 placeholder="Ex: Banco do Brasil, Caixinha do Café..."
-                className="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="w-full border border-slate-200 bg-slate-50 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
                 value={formData.name}
                 onChange={e => setFormData({...formData, name: e.target.value})}
               />
@@ -110,7 +118,7 @@ const AccountManager: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Tipo</label>
               <select 
-                className="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="w-full border border-slate-200 bg-slate-50 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
                 value={formData.type}
                 onChange={e => setFormData({...formData, type: e.target.value as any})}
               >
@@ -125,7 +133,7 @@ const AccountManager: React.FC = () => {
                 type="number" 
                 step="0.01"
                 required
-                className="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="w-full border border-slate-200 bg-slate-50 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
                 value={formData.initialBalance}
                 onChange={e => setFormData({...formData, initialBalance: e.target.value})}
               />
@@ -134,7 +142,7 @@ const AccountManager: React.FC = () => {
               <label className="block text-sm font-medium text-slate-700 mb-1">Descrição</label>
               <input 
                 type="text" 
-                className="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="w-full border border-slate-200 bg-slate-50 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
                 value={formData.description}
                 onChange={e => setFormData({...formData, description: e.target.value})}
               />
@@ -143,13 +151,13 @@ const AccountManager: React.FC = () => {
                <button 
                 type="button" 
                 onClick={resetForm}
-                className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg"
+                className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg font-medium"
               >
                 Cancelar
               </button>
               <button 
                 type="submit" 
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg"
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md font-bold"
               >
                 {editingId ? 'Atualizar Conta' : 'Salvar Conta'}
               </button>
@@ -162,28 +170,28 @@ const AccountManager: React.FC = () => {
         {accounts.map(account => {
             const currentBalance = calculateCurrentBalance(account.id, account.initialBalance);
             return (
-                <div key={account.id} className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow relative group">
+                <div key={account.id} className="bg-white p-6 rounded-xl shadow-sm border border-blue-50 hover:shadow-md transition-shadow relative group">
                     <div className="flex justify-between items-start mb-4">
                         <div className="flex items-center gap-3">
-                            <div className="p-3 bg-slate-50 rounded-lg">
+                            <div className="p-3 bg-blue-50 rounded-lg">
                                 {getIcon(account.type)}
                             </div>
                             <div>
-                                <h3 className="font-bold text-slate-800">{account.name}</h3>
+                                <h3 className="font-bold text-blue-900">{account.name}</h3>
                                 <p className="text-xs text-slate-500">{account.description || 'Sem descrição'}</p>
                             </div>
                         </div>
                         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button 
                                 onClick={() => handleEdit(account)}
-                                className="text-slate-400 hover:text-emerald-600 p-1"
+                                className="text-slate-400 hover:text-blue-600 p-1"
                                 title="Editar Conta"
                             >
                                 <Pencil size={18} />
                             </button>
                             <button 
                                 onClick={() => { if(window.confirm('Excluir esta conta?')) deleteAccount(account.id); }}
-                                className="text-slate-400 hover:text-rose-500 p-1"
+                                className="text-slate-400 hover:text-red-500 p-1"
                                 title="Excluir Conta"
                             >
                                 <Trash2 size={18} />
@@ -196,9 +204,9 @@ const AccountManager: React.FC = () => {
                             <span className="text-slate-500">Saldo Inicial:</span>
                             <span className="font-medium text-slate-700">{formatCurrency(account.initialBalance)}</span>
                         </div>
-                        <div className="pt-3 border-t border-slate-100">
+                        <div className="pt-3 border-t border-blue-50">
                              <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">Saldo Atual</p>
-                             <p className={`text-2xl font-bold ${currentBalance >= 0 ? 'text-slate-800' : 'text-rose-600'}`}>
+                             <p className={`text-2xl font-bold ${currentBalance >= 0 ? 'text-blue-700' : 'text-red-600'}`}>
                                 {formatCurrency(currentBalance)}
                              </p>
                         </div>

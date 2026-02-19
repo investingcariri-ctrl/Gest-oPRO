@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useFinance } from '../context/FinanceContext';
 import { Transaction, TransactionType, PaymentMethod } from '../types';
@@ -175,12 +174,12 @@ const TransactionManager: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-           <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Fluxo de Caixa</h2>
-           <p className="text-slate-500 dark:text-slate-400">Gestão de Entradas e Saídas</p>
+           <h2 className="text-2xl font-bold text-blue-900">Fluxo de Caixa</h2>
+           <p className="text-slate-500">Gestão de Entradas e Saídas</p>
         </div>
         <button 
           onClick={() => { if(showForm && !editingId) setShowForm(false); else { resetForm(); setShowForm(true); } }}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-md"
         >
           {showForm && !editingId ? <X size={20} /> : <Plus size={20} />}
           {showForm && !editingId ? 'Fechar' : 'Nova Transação'}
@@ -188,44 +187,44 @@ const TransactionManager: React.FC = () => {
       </div>
 
       {showForm && (
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 animate-in fade-in slide-in-from-top-4">
-          <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4">{editingId ? 'Editar Transação' : 'Adicionar Transação'}</h3>
+        <div className="bg-white p-6 rounded-xl shadow-lg border border-blue-100 animate-in fade-in slide-in-from-top-4">
+          <h3 className="text-lg font-bold text-blue-900 mb-4">{editingId ? 'Editar Transação' : 'Adicionar Transação'}</h3>
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Descrição</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Descrição</label>
               <input 
                 type="text" 
                 required
-                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="w-full border border-slate-200 rounded-lg p-2 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none"
                 value={formData.description}
                 onChange={e => setFormData({...formData, description: e.target.value})}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Valor (R$)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Valor (R$)</label>
               <input 
                 type="number" 
                 step="0.01"
                 required
-                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="w-full border border-slate-200 rounded-lg p-2 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none"
                 value={formData.amount}
                 onChange={e => setFormData({...formData, amount: e.target.value})}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Data</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Data</label>
               <input 
                 type="date" 
                 required
-                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="w-full border border-slate-200 rounded-lg p-2 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none"
                 value={formData.date}
                 onChange={e => setFormData({...formData, date: e.target.value})}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Tipo</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Tipo</label>
               <select 
-                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="w-full border border-slate-200 rounded-lg p-2 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none"
                 value={formData.type}
                 onChange={e => setFormData({...formData, type: e.target.value as TransactionType, category: ''})}
               >
@@ -234,12 +233,12 @@ const TransactionManager: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 flex justify-between">
+              <label className="block text-sm font-medium text-slate-700 mb-1 flex justify-between">
                 Categoria
                 <button 
                     type="button" 
                     onClick={() => setShowCategoryForm(!showCategoryForm)}
-                    className="text-emerald-600 hover:text-emerald-700 flex items-center gap-1 text-xs"
+                    className="text-blue-600 hover:text-blue-700 flex items-center gap-1 text-xs"
                 >
                     <Plus size={12} /> Nova
                 </button>
@@ -248,17 +247,17 @@ const TransactionManager: React.FC = () => {
                 <div className="flex gap-1">
                     <input 
                         type="text" 
-                        className="flex-1 border border-emerald-300 rounded-lg p-1.5 text-sm dark:bg-slate-900 dark:text-white outline-none"
+                        className="flex-1 border border-blue-300 rounded-lg p-1.5 text-sm bg-white outline-none"
                         placeholder="Nome da categoria"
                         value={newCategoryName}
                         onChange={e => setNewCategoryName(e.target.value)}
                     />
-                    <button type="button" onClick={handleAddCategory} className="bg-emerald-600 text-white p-1 rounded hover:bg-emerald-700"><Plus size={16} /></button>
+                    <button type="button" onClick={handleAddCategory} className="bg-blue-600 text-white p-1 rounded hover:bg-blue-700"><Plus size={16} /></button>
                     <button type="button" onClick={() => setShowCategoryForm(false)} className="bg-slate-200 text-slate-600 p-1 rounded hover:bg-slate-300"><X size={16} /></button>
                 </div>
               ) : (
                 <select 
-                    className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                    className="w-full border border-slate-200 rounded-lg p-2 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none"
                     value={formData.category}
                     onChange={e => setFormData({...formData, category: e.target.value})}
                     required
@@ -271,9 +270,9 @@ const TransactionManager: React.FC = () => {
               )}
             </div>
             <div className="col-span-1 md:col-span-2">
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Conta / Caixa</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Conta / Caixa</label>
                 <select 
-                    className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                    className="w-full border border-slate-200 rounded-lg p-2 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none"
                     value={formData.accountId}
                     onChange={e => setFormData({...formData, accountId: e.target.value})}
                     required
@@ -285,9 +284,9 @@ const TransactionManager: React.FC = () => {
                 </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
               <select 
-                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="w-full border border-slate-200 rounded-lg p-2 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none"
                 value={formData.status}
                 onChange={e => setFormData({...formData, status: e.target.value as any})}
               >
@@ -296,9 +295,9 @@ const TransactionManager: React.FC = () => {
               </select>
             </div>
              <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Meio de Pagamento</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Meio de Pagamento</label>
               <select 
-                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="w-full border border-slate-200 rounded-lg p-2 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none"
                 value={formData.paymentMethod}
                 onChange={e => setFormData({...formData, paymentMethod: e.target.value as any})}
               >
@@ -310,9 +309,9 @@ const TransactionManager: React.FC = () => {
               </select>
             </div>
              <div className="col-span-2 lg:col-span-4">
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Anexar Documento</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Anexar Documento</label>
                 <div className="flex items-center gap-2">
-                    <label className="cursor-pointer bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors border border-slate-300 dark:border-slate-700 w-full">
+                    <label className="cursor-pointer bg-slate-50 hover:bg-blue-50 text-slate-600 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors border border-slate-200 w-full">
                         <Upload size={18} />
                         <span className="truncate">{formData.attachmentName || "Escolher arquivo (PDF, Imagem)..."}</span>
                         <input type="file" className="hidden" onChange={handleFileChange} />
@@ -320,10 +319,10 @@ const TransactionManager: React.FC = () => {
                 </div>
             </div>
              <div className="col-span-2 lg:col-span-4">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Notas (Opcional)</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Notas (Opcional)</label>
               <input 
                 type="text" 
-                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                className="w-full border border-slate-200 rounded-lg p-2 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none"
                 value={formData.notes}
                 onChange={e => setFormData({...formData, notes: e.target.value})}
                 placeholder="Detalhes adicionais..."
@@ -333,13 +332,13 @@ const TransactionManager: React.FC = () => {
               <button 
                 type="button" 
                 onClick={resetForm}
-                className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
+                className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg"
               >
                 Cancelar
               </button>
               <button 
                 type="submit" 
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg"
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md font-bold"
               >
                 {editingId ? 'Atualizar Lançamento' : 'Salvar Lançamento'}
               </button>
@@ -349,20 +348,20 @@ const TransactionManager: React.FC = () => {
       )}
 
       {/* Filters */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 bg-white p-4 rounded-xl shadow-sm border border-blue-50">
         <div className="relative col-span-1 lg:col-span-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400" size={18} />
           <input 
             type="text" 
             placeholder="Buscar descrição..." 
-            className="w-full pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full pl-10 pr-4 py-2 border border-blue-100 bg-slate-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
           />
         </div>
         <div className="flex gap-2 col-span-1">
             <select 
-                className="w-full border border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full border border-blue-100 bg-slate-50 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
                 value={filterAccountId}
                 onChange={(e) => setFilterAccountId(e.target.value)}
             >
@@ -375,19 +374,19 @@ const TransactionManager: React.FC = () => {
         <div className="flex gap-2 col-span-1 lg:col-span-2 justify-end">
             <button 
                 onClick={() => setFilterType('all')}
-                className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterType === 'all' ? 'bg-slate-800 dark:bg-slate-100 dark:text-slate-900 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}`}
+                className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterType === 'all' ? 'bg-blue-900 text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
             >
                 Tudo
             </button>
             <button 
                 onClick={() => setFilterType('income')}
-                className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterType === 'income' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100'}`}
+                className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterType === 'income' ? 'bg-blue-600 text-white shadow-md' : 'bg-blue-50 text-blue-700 hover:bg-blue-100'}`}
             >
                 Entradas
             </button>
             <button 
                 onClick={() => setFilterType('expense')}
-                className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterType === 'expense' ? 'bg-rose-600 text-white' : 'bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 hover:bg-rose-100'}`}
+                className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterType === 'expense' ? 'bg-red-600 text-white shadow-md' : 'bg-red-50 text-red-700 hover:bg-red-100'}`}
             >
                 Saídas
             </button>
@@ -395,52 +394,52 @@ const TransactionManager: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-blue-50 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
+            <thead className="bg-blue-50 border-b border-blue-100">
               <tr>
                 <th className="px-6 py-4 w-12"></th>
-                <th className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Data</th>
-                <th className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Descrição</th>
-                <th className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Caixa/Conta</th>
-                <th className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Categoria</th>
-                <th className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Valor</th>
-                <th className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">Status</th>
-                <th className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300 text-right">Ações</th>
+                <th className="px-6 py-4 font-semibold text-blue-900">Data</th>
+                <th className="px-6 py-4 font-semibold text-blue-900">Descrição</th>
+                <th className="px-6 py-4 font-semibold text-blue-900">Caixa/Conta</th>
+                <th className="px-6 py-4 font-semibold text-blue-900">Categoria</th>
+                <th className="px-6 py-4 font-semibold text-blue-900">Valor</th>
+                <th className="px-6 py-4 font-semibold text-blue-900">Status</th>
+                <th className="px-6 py-4 font-semibold text-blue-900 text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+            <tbody className="divide-y divide-blue-50">
               {filteredTransactions.map(t => (
                 <React.Fragment key={t.id}>
                     <tr 
                         onClick={() => toggleExpand(t.id)}
-                        className={`hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer ${expandedId === t.id ? 'bg-slate-50 dark:bg-slate-700/30' : ''}`}
+                        className={`hover:bg-blue-50/30 transition-colors cursor-pointer ${expandedId === t.id ? 'bg-blue-50/50' : ''}`}
                     >
-                    <td className="px-6 py-4 text-slate-400">
+                    <td className="px-6 py-4 text-blue-400">
                         {expandedId === t.id ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                     </td>
-                    <td className="px-6 py-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">{t.date}</td>
-                    <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                        {t.attachment && <Paperclip size={14} className="text-slate-400" />}
+                    <td className="px-6 py-4 text-slate-600 whitespace-nowrap">{t.date}</td>
+                    <td className="px-6 py-4 font-medium text-slate-800 flex items-center gap-2">
+                        {t.attachment && <Paperclip size={14} className="text-blue-400" />}
                         {t.description}
                     </td>
-                    <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{getAccountName(t.accountId)}</td>
+                    <td className="px-6 py-4 text-slate-600">{getAccountName(t.accountId)}</td>
                     <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-300">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                         {t.category}
                         </span>
                     </td>
-                    <td className={`px-6 py-4 font-bold ${t.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600'}`}>
+                    <td className={`px-6 py-4 font-bold ${t.type === 'income' ? 'text-blue-600' : 'text-red-600'}`}>
                         {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
                     </td>
                     <td className="px-6 py-4">
                         {t.status === 'completed' ? (
-                            <span className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-1 rounded text-xs">
+                            <span className="inline-flex items-center gap-1 text-blue-700 bg-blue-100 px-2 py-1 rounded text-xs">
                                 <CheckCircle size={12} /> Pago
                             </span>
                         ) : (
-                            <span className="inline-flex items-center gap-1 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-2 py-1 rounded text-xs">
+                            <span className="inline-flex items-center gap-1 text-amber-700 bg-amber-50 px-2 py-1 rounded text-xs">
                                 <Clock size={12} /> Pendente
                             </span>
                         )}
@@ -456,14 +455,14 @@ const TransactionManager: React.FC = () => {
                             </button>
                             <button 
                                 onClick={(e) => handleEdit(e, t)} 
-                                className="text-slate-400 hover:text-emerald-600 p-1"
+                                className="text-slate-400 hover:text-blue-600 p-1"
                                 title="Editar"
                             >
                                 <Pencil size={18} />
                             </button>
                             <button 
                                 onClick={(e) => handleDelete(e, t.id)} 
-                                className="text-slate-400 hover:text-rose-500 p-1"
+                                className="text-slate-400 hover:text-red-500 p-1"
                                 title="Excluir"
                             >
                                 <Trash2 size={18} />
@@ -472,40 +471,40 @@ const TransactionManager: React.FC = () => {
                     </td>
                     </tr>
                     {expandedId === t.id && (
-                        <tr className="bg-slate-50 dark:bg-slate-900/30 border-b border-slate-100 dark:border-slate-700">
+                        <tr className="bg-blue-50/10 border-b border-blue-50">
                             <td colSpan={8} className="px-6 py-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-2">
                                     <div className="space-y-4">
                                         <div>
-                                            <span className="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+                                            <span className="flex items-center gap-2 text-xs font-semibold text-blue-500 uppercase tracking-wider mb-1">
                                                 <CreditCard size={14} /> Método de Pagamento
                                             </span>
-                                            <p className="text-sm font-medium text-slate-700 dark:text-slate-300 pl-6">
+                                            <p className="text-sm font-medium text-slate-700 pl-6">
                                                 {getPaymentMethodLabel(t.paymentMethod)}
                                             </p>
                                         </div>
                                         <div>
-                                            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1 block pl-6">ID da Transação</span>
+                                            <span className="text-xs font-semibold text-blue-500 uppercase tracking-wider mb-1 block pl-6">ID da Transação</span>
                                             <p className="text-xs font-mono text-slate-400 pl-6">{t.id}</p>
                                         </div>
                                     </div>
                                     <div>
-                                        <span className="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+                                        <span className="flex items-center gap-2 text-xs font-semibold text-blue-500 uppercase tracking-wider mb-1">
                                             <StickyNote size={14} /> Notas & Observações
                                         </span>
-                                        <div className="bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 ml-6">
+                                        <div className="bg-white p-3 rounded border border-blue-50 text-sm text-slate-600 ml-6">
                                             {t.notes || <span className="text-slate-400 italic">Nenhuma observação registrada.</span>}
                                         </div>
                                     </div>
                                     <div>
-                                         <span className="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+                                         <span className="flex items-center gap-2 text-xs font-semibold text-blue-500 uppercase tracking-wider mb-1">
                                             <Paperclip size={14} /> Anexos
                                         </span>
-                                        <div className="bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 ml-6 flex items-center justify-between">
+                                        <div className="bg-white p-3 rounded border border-blue-50 text-sm text-slate-600 ml-6 flex items-center justify-between">
                                             {t.attachment ? (
                                                 <>
-                                                    <span className="truncate max-w-[150px]">{t.attachment}</span>
-                                                    <span className="text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-2 py-0.5 rounded">Arquivo</span>
+                                                    <span className="truncate max-w-[150px] font-medium">{t.attachment}</span>
+                                                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Arquivo</span>
                                                 </>
                                             ) : (
                                                 <span className="text-slate-400 italic">Nenhum documento anexado.</span>

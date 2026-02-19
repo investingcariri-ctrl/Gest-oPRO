@@ -42,24 +42,29 @@ const Documents: React.FC = () => {
 
   const printDocument = (doc: OfficialDocument) => {
     setSelectedDoc(doc);
-    setTimeout(() => window.print(), 100);
+    // Pequeno atraso para garantir que o componente renderizou com o documento selecionado
+    setTimeout(() => {
+      window.print();
+    }, 250);
   };
 
   return (
     <div className="space-y-6">
       <style>{`
         @media print {
-          body * { visibility: hidden; }
-          #printable-doc, #printable-doc * { visibility: visible; }
-          #printable-doc {
-            position: absolute;
-            left: 0; top: 0; width: 100%;
-            background: white; padding: 50px;
+          .no-print { display: none !important; }
+          #printable-doc { 
+            display: block !important; 
+            visibility: visible !important;
+            position: relative !important;
+            width: 100% !important;
+            padding: 40px !important;
           }
+          body { background: white !important; }
         }
       `}</style>
 
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center no-print">
          <div>
             <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Central de Documentos</h2>
             <p className="text-slate-500 dark:text-slate-400">Arquivo digital e emissão de documentos oficiais</p>
@@ -81,7 +86,7 @@ const Documents: React.FC = () => {
       </div>
 
       {activeTab === 'files' ? (
-        <div className="space-y-6 animate-in fade-in">
+        <div className="space-y-6 animate-in fade-in no-print">
            <div className="flex justify-end">
               <button 
                 onClick={() => setShowUpload(true)}
@@ -116,7 +121,7 @@ const Documents: React.FC = () => {
            </div>
         </div>
       ) : (
-        <div className="space-y-6 animate-in fade-in">
+        <div className="space-y-6 animate-in fade-in no-print">
             <div className="flex justify-end">
                 <button 
                     onClick={() => setShowDocForm(true)}
@@ -214,9 +219,9 @@ const Documents: React.FC = () => {
 
       {/* Printable Official Document */}
       {selectedDoc && (
-        <div id="printable-doc" className="hidden">
+        <div id="printable-doc" className="hidden print:block bg-white text-black p-10 min-h-screen">
             <div className="text-center mb-12 border-b-2 border-slate-900 pb-8">
-                <h1 className="text-3xl font-bold uppercase">{associationName}</h1>
+                <h1 className="text-2xl font-bold uppercase">{associationName}</h1>
                 <p className="text-sm mt-2 font-medium">Sede Administrativa - Secretaria Executiva</p>
             </div>
 
@@ -225,7 +230,7 @@ const Documents: React.FC = () => {
             </div>
 
             <div className="mb-12">
-                <h2 className="text-2xl font-bold uppercase mb-4 text-center underline">
+                <h2 className="text-xl font-bold uppercase mb-4 text-center underline underline-offset-8">
                     {selectedDoc.type === 'oficio' ? `OFÍCIO Nº ${selectedDoc.content.number || '___'}` : 
                      selectedDoc.type === 'comissao' ? `PORTARIA DE COMISSÃO: ${selectedDoc.title}` : 
                      `ESCALA DE SERVIÇO: ${selectedDoc.title}`}
@@ -233,28 +238,28 @@ const Documents: React.FC = () => {
             </div>
 
             {selectedDoc.type === 'oficio' && (
-                <div className="space-y-6 text-lg leading-relaxed">
+                <div className="space-y-6 text-base leading-relaxed">
                     <p><strong>Ao Sr(a):</strong> {selectedDoc.content.recipient || '___________________'}</p>
                     <p><strong>Assunto:</strong> {selectedDoc.content.subject || 'Assunto Geral'}</p>
-                    <div className="mt-8 whitespace-pre-wrap">{selectedDoc.content.body}</div>
+                    <div className="mt-10 whitespace-pre-wrap">{selectedDoc.content.body}</div>
                 </div>
             )}
 
             {(selectedDoc.type === 'comissao' || selectedDoc.type === 'escala') && (
-                <div className="space-y-6 text-lg leading-relaxed">
+                <div className="space-y-6 text-base leading-relaxed">
                     <div className="whitespace-pre-wrap">{selectedDoc.content.body}</div>
                 </div>
             )}
 
-            <div className="mt-32 text-center">
-                <div className="w-64 border-t border-slate-900 mx-auto pt-2">
+            <div className="mt-40 text-center">
+                <div className="w-72 border-t border-slate-900 mx-auto pt-2">
                     <p className="font-bold">Diretoria Executiva</p>
                     <p className="text-sm">{associationName}</p>
                 </div>
             </div>
 
-            <div className="mt-20 text-[10px] text-slate-400 text-center">
-                Documento gerado eletronicamente através da plataforma TesourariaPro em {new Date().toLocaleString()}
+            <div className="mt-24 text-[10px] text-slate-400 text-center italic border-t pt-2">
+                Documento gerado eletronicamente através da plataforma Gestão Integrada Pro em {new Date().toLocaleString()}
             </div>
         </div>
       )}

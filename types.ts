@@ -1,6 +1,7 @@
 
 export type TransactionType = 'income' | 'expense';
 export type TransactionStatus = 'pending' | 'completed' | 'cancelled';
+export type CommitmentStatus = 'pending' | 'paid' | 'cancelled';
 export type PaymentMethod = 'bank_transfer' | 'credit_card' | 'cash' | 'check' | 'pix';
 export type ProjectStatus = 'planned' | 'ongoing' | 'completed' | 'cancelled';
 export type OfficialDocType = 'oficio' | 'comissao' | 'escala';
@@ -65,6 +66,19 @@ export interface OfficialDocument {
   title: string;
   content: any;
   created_at: string;
+}
+
+export interface FinancialCommitment {
+  id: string;
+  memberId: string;
+  reference: string;
+  amount: number;
+  dueDate: string;
+  type: string;
+  status: CommitmentStatus;
+  accountId: string;
+  notes?: string;
+  created_at?: string;
 }
 
 export interface FinancialSummary {

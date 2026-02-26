@@ -2,7 +2,7 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useFinance } from '../context/FinanceContext';
-import { LayoutDashboard, ArrowRightLeft, PieChart, Settings as SettingsIcon, FileText, Landmark, LogOut, Users, Briefcase } from 'lucide-react';
+import { LayoutDashboard, ArrowRightLeft, PieChart, Settings as SettingsIcon, FileText, Landmark, LogOut, Users, Briefcase, Calendar } from 'lucide-react';
 import { supabase } from '../services/supabaseClient';
 
 const Layout: React.FC = () => {
@@ -14,6 +14,7 @@ const Layout: React.FC = () => {
       { to: '/', label: 'Painel Geral', icon: <LayoutDashboard size={20} /> },
       { to: '/accounts', label: 'Caixas e Contas', icon: <Landmark size={20} /> },
       { to: '/transactions', label: 'Fluxo de Caixa', icon: <ArrowRightLeft size={20} /> },
+      { to: '/commitments', label: 'Compromissos', icon: <Calendar size={20} /> },
       { to: '/reports', label: 'Relatórios', icon: <PieChart size={20} /> },
     ]},
     { section: 'Secretaria', items: [

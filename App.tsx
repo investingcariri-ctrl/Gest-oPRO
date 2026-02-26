@@ -4,6 +4,7 @@ import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import TransactionManager from './components/TransactionManager';
+import FinancialCommitments from './components/FinancialCommitments';
 import Reports from './components/Reports';
 import Documents from './components/Documents';
 import AccountManager from './components/AccountManager';
@@ -54,6 +55,7 @@ const App: React.FC = () => {
                     {/* Financeiro */}
                     <Route path="accounts" element={<AccountManager />} />
                     <Route path="transactions" element={<TransactionManager />} />
+                    <Route path="commitments" element={<FinancialCommitments />} />
                     <Route path="reports" element={<Reports />} />
                     {/* Secretaria */}
                     <Route path="board" element={<BoardManager />} />
